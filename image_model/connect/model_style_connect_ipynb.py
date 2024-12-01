@@ -7,11 +7,14 @@ Original file is located at
     https://colab.research.google.com/drive/1s9nbTP677ckKc-44Frb_ZzZC1atjnlrq
 """
 
+from google.colab import drive
+drive.mount('/content/drive')
+
 from diffusers import StableDiffusionPipeline
 import torch
 import os
 
-def generate_storybook_image(prompt, neg_prompt='', model_directory='/content/drive/MyDrive/sd_model_fintuning_LoRA/fintune_model2', steps=40, scale=7.5, save_path=None):
+def generate_storybook_image(prompt,  model_directory, steps=40, scale=7.5, save_path=None):
 
     # Get the latest fine-tuned model path
     model_path = os.listdir(model_directory)[-1]
@@ -21,41 +24,43 @@ def generate_storybook_image(prompt, neg_prompt='', model_directory='/content/dr
     pipe.unet.load_attn_procs(os.path.join(model_directory, model_path))
     pipe.to("cuda")
 
+    # Fixed negative prompt
+    neg_prompt = '''FastNegativeV2, (bad-artist:1.0), (loli:1.2),
+    (worst quality, low quality:1.4), (bad_prompt_version2:0.8),
+    bad-hands-5, lowres, bad anatomy, bad hands, ((text)), (watermark),
+    error, missing fingers, extra digit, fewer digits, cropped,
+    worst quality, low quality, normal quality, ((username)), blurry,
+    (extra limbs), bad-artist-anime, badhandv4, EasyNegative,
+    ng_deepnegative_v1_75t, verybadimagenegative_v1.3, BadDream,
+    (three hands:1.1), (three legs:1.1), (more than two hands:1.4),
+    (more than two legs,:1.2), badhandv4, EasyNegative, ng_deepnegative_v1_75t,
+    verybadimagenegative_v1.3, (worst quality, low quality:1.4), text, words, logo, watermark'''
+
+
     # Generate the image
     image = pipe(prompt, negative_prompt=neg_prompt, num_inference_steps=steps, guidance_scale=scale).images[0]
 
-    # Save the image if a save path is provided
-    if save_path:
-        image.save(save_path)
-        print(f"Image saved at: {save_path}")
+    # # Save the image if a save path is provided
+    # if save_path:
+    #     image.save(save_path)
+    #     print(f"Image saved at: {save_path}")
 
     return image
 
-# Example usage
+# # Example usage
 
-# 아래 프롬프트는 LLM에서 받아와야함
+# # 아래 프롬프트는 LLM에서 받아와야함
 
-#positive prompt
-prompt = ''' (lvngvncnt), children's drawing style, storybook illustration,
-Fairy Tale Drawing,
-young child and mother walking a small and happy dog together, Park stroll, puppy,
-joyful atmosphere, warm and soft lighting, vibrant park scene, cheerful interactions,
-bright and sunny day in a park with trees and greenery, hartwarming moments '''
+# # positive prompt
+# prompt = ''' (masterpiece, best quality, ultra detailed),
+# ((impressionism, oil painting with brushstrokes, oil painting,)),
+# young child and mother walking a small and happy dog together, Park stroll, puppy,
+# child with medium-length hair,happy expressive simple faces,
+# joyful atmosphere, warm and soft lighting, vibrant park scene,  pastel colors,
+# bright and sunny day in a park with trees and greenery, hartwarming moments '''
 
-#Cartoon Illustration for Kids,
 
-#negative prompt
-neg_prompt='''FastNegativeV2,(bad-artist:1.0), (loli:1.2),
-(worst quality, low quality:1.4), (bad_prompt_version2:0.8),
-bad-hands-5,lowres, bad anatomy, bad hands, ((text)), (watermark),
-error, missing fingers, extra digit, fewer digits, cropped,
-worst quality, low quality, normal quality, ((username)), blurry,
- (extra limbs), bad-artist-anime, badhandv4, EasyNegative,
- ng_deepnegative_v1_75t, verybadimagenegative_v1.3, BadDream,
-(three hands:1.1),(three legs:1.1),(more than two hands:1.4),
-(more than two legs,:1.2),badhandv4,EasyNegative,ng_deepnegative_v1_75t,verybadimagenegative_v1.3,(worst quality, low quality:1.4),text,words,logo,watermark,
-'''
+# image = generate_storybook_image(prompt, model_directory='/content/drive/MyDrive/sd_model_fintuning_LoRA/fintune_model2')
+# #, save_path="/content/drive/MyDrive/sd_model_fintuning_LoRA/image/tfimagetest1.png")
+# image
 
-image = generate_storybook_image(prompt, neg_prompt)
-# save_path="/content/drive/MyDrive/sd_model_fintuning_LoRA/image/tfimagetest1.png"
-image
