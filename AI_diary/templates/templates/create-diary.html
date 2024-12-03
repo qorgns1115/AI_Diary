@@ -6,7 +6,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     <style>
-        /* 전체 화면 중앙 정렬 */
+        /* 기존 스타일 유지 */
         body {
             display: flex;
             flex-direction: column;
@@ -28,7 +28,7 @@
             margin-bottom: 20px;
         }
 
-        input[type="text"] {
+        input[type="text"], input[type="file"] {
             width: 100%;
             padding: 8px;
             margin-bottom: 15px;
@@ -92,24 +92,37 @@
             font-size: 14px;
             color: #555;
         }
+
         .loading-spinner {
-    border: 8px solid #f3f3f3;
-    border-top: 8px solid #ff6f61;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    animation: spin 1s linear infinite;
-}
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #ff6f61;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
+        .image-preview {
+            margin-top: 15px;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            display: none;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
     </style>
 </head>
 <body>
-    <form id="diaryForm">
+    <form id="diaryForm" enctype="multipart/form-data">
         <h1 style="text-align: center;">일기 생성하기</h1>
         {% csrf_token %}
 
@@ -127,6 +140,16 @@
 
         <label for="hair">헤어스타일:</label>
         <input type="text" id="hair" name="hair" placeholder="예: 긴 머리, 짧은 머리" required>
+
+        <!-- 이미지 업로드 -->
+        <label for="imageUpload">이미지 추가:</label>
+        <input type="file" id="imageUpload" name="image" accept="image/*">
+
+        <!-- 미리보기 -->
+        <div class="image-preview">
+            <p>이미지 미리보기:</p>
+            <img id="previewImage" alt="이미지 미리보기">
+        </div>
 
         <button type="button" onclick="generatePrompt()">일기 생성</button>
     </form>
@@ -159,23 +182,42 @@
             }
         }
 
+        // 이미지 업로드 미리보기 기능
+        const imageInput = document.getElementById('imageUpload');
+        const previewImage = document.getElementById('previewImage');
+
+        imageInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    previewImage.src = event.target.result;
+                    previewImage.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                previewImage.src = '';
+                previewImage.style.display = 'none';
+            }
+        });
+
         function generatePrompt() {
-            var formData = $('#diaryForm').serialize();
+            const formData = new FormData($('#diaryForm')[0]);
 
             // 로딩 애니메이션 표시
-            $('#loadingOverlay').css('display', 'flex'); // 바로 표시
-
+            $('#loadingOverlay').css('display', 'flex');
 
             $.ajax({
                 type: 'POST',
                 url: '/generate/',  // 프롬프트 생성 뷰로 POST 요청
                 data: formData,
+                processData: false,
+                contentType: false,
                 headers: {
                     'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()
                 },
                 success: function(response) {
                     if (response.prompt) {
-                        // 성공 시 결과 페이지로 리다이렉트
                         window.location.href = '/result/?prompt=' + encodeURIComponent(response.prompt);
                     } else if (response.error) {
                         alert('오류: ' + response.error);
@@ -185,7 +227,6 @@
                     alert('서버 요청 중 오류가 발생했습니다.');
                 },
                 complete: function() {
-                    // 로딩 애니메이션 숨김
                     $('#loadingOverlay').fadeOut();
                 }
             });
