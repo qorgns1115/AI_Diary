@@ -17,14 +17,14 @@ Stable Diffusion 프롬프트 작성은 기본적으로 다음과 같은 구조�
 스타일 및 환경 (Style & Quality): 예술적 스타일과 이미지의 퀄리티 요소.\
 추가적으로, 생성된 프롬프트가 너무 길어지지 않도록 and 및 쉼표(,)로 구분된 키워드가 10개를 넘어서는 안 돼.\
 프롬프트 작성 지침\
-다음 세 가지 지시사항을 잘 따르도록 해줘:\
-1.프롬프트의 순서는 \'행동,배경,풍경\',\'분위기 및 얼굴 묘사\' 이 순서로 그림의 주제 요소들부터, 세부사항 요소로 작성해야해. 그리고 \'스타일\'은 절대 작성하면 안돼. 환경만 작성해. 스타일은 직접 지정할꺼야. \
+다음 네 가지 지시사항을 잘 따르도록 해줘:\
+1.프롬프트의 순서는 \'행동,배경,풍경\',\'분위기 및 얼굴 묘사\' 이 순서로 그림의 주제 요소들부터, 세부사항 요소로 작성해야해. 그리고 \'스타일\'은 절대 작성하면 안돼. \
 2.배경 및 사건 요소는 어디서와 무엇을이 중요하게 드러나도록, 행동과 사건이 명확히 표현되어야 해. 또한 사용자 외형 특징도 활용 해야 해.\
-3.출력물은 대괄호 안에 형식에 맞게 나열해줘. 키워드는 10개를 초과하지 않도록 해. 출력 최대 토큰도 키워드를 고려하여 정해져있으니, 꼭 넘으면 안돼\
-출력 형식:\
+3.출력물은 대괄호[] 안에 형식에 맞게 나열해줘. 키워드는 10개를 초과하지 않도록, 총 길이를 70단어 이하로 출력해. \
+4.행동, 사람의 얼굴, 사람에 대한 묘사를 할 때 \"clear, close-up\"과 같은 세밀한 표현을 위한 형용사를 잘 추가해줘. 예시를 알려줄게. 예시에서 착안하여 이 지시사항을 잘 해석하여 수행해줘 예시들 : clear detailed faces and hands, hand and face details emphasized,close-up focus on hands and faces, sharp and defined facial features and hands, focus on action\
+다음은 프롬프트 작성 예시와 출력 형식에 대한 예시야\
 [프롬프트 내용]\
 예시 프롬프트\
-다음은 프롬프트 작성 예시야:\
 예시1)\
 사용자 입력:\
 헤어스타일: 긴 곱슬머리, 성별: 여자, 어디서: 마법의 숲, 무엇을: 나비와 놀고 있음, 어땠는지: 행복함.\
@@ -40,11 +40,10 @@ Stable Diffusion 프롬프트 작성은 기본적으로 다음과 같은 구조�
 헤어스타일: 중간 머리, 성별: 남자, 어디서: 공원에서, 무엇을: 부모님과 애완동물 산책, 어땠는지: 재밌고 행복했다. 또 하고 싶다.\
 출력 예시:\
 [child with medium-length hair wearing glasses holding a leash firmly, young child walking a small happy dog with mother, mother guiding the child while holding the leash together, dog walking energetically alongside the child and mother, clear focus on the action of walking the dog, clear detailed faces and hands, hand and face details emphasized, sharp and defined facial features and hands, close-up focus on hands and faces, natural and relaxed walking posture, bright and sunny day in a park with trees and greenery, simple and playful lines, vibrant but soft colors, happy expressive faces on child mother and dog, warm and soft lighting, focus on action]\
-이제 이 지침을 기반으로 사용자 입력을 토대로 프롬프트를 작성해줘.\
+이제 이 지침을 기반으로 사용자 입력을 토대로 프롬프트를 작성해줘.절대 키워드가 10개를 넘어선 안돼.\
         사용자 외형 특징 : 헤어스타일 : {hair}, 성별 : {gender}\
         어디서 : {where}, 무엇을 : {what}, 어땠는지 : {feeling}\
         출력 : "
-
     # PromptTemplate 생성
     prompt_template = PromptTemplate.from_template(template)
 
