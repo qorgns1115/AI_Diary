@@ -56,6 +56,7 @@ Stable Diffusion 프롬프트 작성은 기본적으로 다음과 같은 구조�
 
     # LangChain 모델 초기화
     model = ChatOpenAI(model="gpt-4", temperature=0.7, max_tokens = 77 ,api_key=os.getenv("OPENAI_API_KEY"))
+    model2 = ChatOpenAI(model="gpt-4", temperature=0.9, max_tokens = 300 ,api_key=os.getenv("OPENAI_API_KEY"))
 
     # 프롬프트 생성
     sdprompt = prompt_template.format(hair=hair, gender=gender, where=where, what=what, feeling=feeling)
@@ -65,12 +66,14 @@ Stable Diffusion 프롬프트 작성은 기본적으로 다음과 같은 구조�
 
     # Stable Diffusion 프롬프트와 한국어 일기 작성
     diary_prompt = f"""
-    아래의 Stable Diffusion 프롬프트를 기반으로, 어린이가 직접 작성한 것처럼 자연스러운 일기 내용을 한국어로 작성해줘.
-    내용을 최소 3문장 이상으로 길게 작성해줘.
-    프롬프트: {sdprompt}
+    다음 3가지 어디서, 무엇을, 어땠는지를 주제로 삼아, 어린이가 직접 작성한 것처럼 자연스러운 일기 내용을 한국어로 작성해줘. 두가지 지시사항을 지켜줘.
+    1. 내용 작성에 도움이 되게, 비교할 프롬프트를 같이 주는데, 프롬프트의 내용은 참고하지 말고, 다음 지시사항에서 비교하는데에만 사용해. 
+    2. 내용은 3~5문장 사이로 작성하고,  프롬프트의 내용에서 절대 연관지을 수 없는 내용은 작성하지 마.  
+    어디서 : {where}, 무엇을 : {what}, 어땠는지 : {feeling}
+    프롬프트 : {sdprompt}
 
     작성된 일기:
     """
 
-    diary_response = model.predict_messages([HumanMessage(content=diary_prompt)])
+    diary_response = model2.predict_messages([HumanMessage(content=diary_prompt)])
     return diary_response.content
