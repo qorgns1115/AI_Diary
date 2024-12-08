@@ -1,0 +1,205 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>감정 통계</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>2024년 감정 통계</h1>
+
+    <!-- 감정 캘린더 -->
+    <div id="calendar">
+        <h2>일별 감정 캘린더</h2>
+        <table>
+            {% for entry in daily_data %}
+                {% if forloop.counter0|divisibleby:7 %}
+                <tr>
+                {% endif %}
+                <td>{{ entry.date }}: {{ entry.emotion }}</td>
+                {% if forloop.counter|divisibleby:7 %}
+                </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- 월별 감정 통계 -->
+    <div id="monthly-stats">
+        <h2>월별 감정 통계</h2>
+        <canvas id="emotionChart"></canvas>
+    </div>
+
+    <script>
+        const monthlyStats = {{ monthly_stats|safe }};
+        const ctx = document.getElementById('emotionChart').getContext('2d');
+
+        const labels = Object.keys(monthlyStats).map(month => `월 ${month}`);
+        const datasets = [];
+
+        const colors = {
+            "기쁨": "rgba(75, 192, 192, 0.6)",
+            "슬픔": "rgba(153, 102, 255, 0.6)",
+            "분노": "rgba(255, 99, 132, 0.6)",
+            "불쾌": "rgba(255, 206, 86, 0.6)",
+           
+            "두려움": "rgba(54, 162, 235, 0.6)"
+        };
+
+        Object.keys(monthlyStats[1]).forEach(emotion => {
+            const data = Object.values(monthlyStats).map(stats => stats[emotion]);
+            datasets.push({
+                label: emotion,
+                data: data,
+                backgroundColor: colors[emotion],
+            });
+        });
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                }
+            }
+        });
+    </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>감정 통계</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td, th {
+            border: 1px solid #ddd;
+            text-align: center;
+            padding: 8px;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>2024년 감정 통계</h1>
+
+    <!-- 감정 캘린더 -->
+    <div id="calendar">
+        <h2>일별 감정 캘린더</h2>
+        <table id="emotionCalendar">
+        </table>
+    </div>
+
+    <!-- 월별 감정 통계 -->
+    <div id="monthly-stats">
+        <h2>월별 감정 통계</h2>
+        <canvas id="emotionChart"></canvas>
+    </div>
+
+    <script>
+        // 랜덤 감정 생성기
+        const emotions = ["기쁨", "슬픔", "분노", "불쾌", "두려움"];
+
+        function getRandomEmotion() {
+            return emotions[Math.floor(Math.random() * emotions.length)];
+        }
+
+        // 캘린더 데이터 생성
+        function generateDailyEmotionData(year, month) {
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const data = [];
+            for (let day = 1; day <= daysInMonth; day++) {
+                data.push({
+                    date: `${month + 1}월 ${day}일`,
+                    emotion: getRandomEmotion()
+                });
+            }
+            return data;
+        }
+
+        // 캘린더 렌더링
+        function renderCalendar(data) {
+            const table = document.getElementById('emotionCalendar');
+            let row = document.createElement('tr');
+
+            data.forEach((entry, index) => {
+                const cell = document.createElement('td');
+                cell.textContent = `${entry.date}: ${entry.emotion}`;
+                row.appendChild(cell);
+
+                if ((index + 1) % 7 === 0) {
+                    table.appendChild(row);
+                    row = document.createElement('tr');
+                }
+            });
+
+            // 마지막 행 추가
+            if (row.children.length > 0) {
+                table.appendChild(row);
+            }
+        }
+
+        // 월별 감정 통계 데이터
+        const monthlyStats = {
+            1: { "기쁨": 10, "슬픔": 5, "분노": 3, "불쾌": 7, "두려움": 4 },
+            2: { "기쁨": 8, "슬픔": 6, "분노": 5, "불쾌": 5, "두려움": 3 },
+            3: { "기쁨": 15, "슬픔": 3, "분노": 2, "불쾌": 6, "두려움": 5 },
+        };
+
+        const ctx = document.getElementById('emotionChart').getContext('2d');
+
+        const labels = Object.keys(monthlyStats).map(month => `월 ${month}`);
+        const datasets = [];
+
+        const colors = {
+            "기쁨": "rgba(75, 192, 192, 0.6)",
+            "슬픔": "rgba(153, 102, 255, 0.6)",
+            "분노": "rgba(255, 99, 132, 0.6)",
+            "불쾌": "rgba(255, 206, 86, 0.6)",
+            "두려움": "rgba(54, 162, 235, 0.6)"
+        };
+
+        Object.keys(monthlyStats[1]).forEach(emotion => {
+            const data = Object.values(monthlyStats).map(stats => stats[emotion]);
+            datasets.push({
+                label: emotion,
+                data: data,
+                backgroundColor: colors[emotion],
+            });
+        });
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                }
+            }
+        });
+
+        // 데이터 생성 및 렌더링 실행
+        const dailyData = generateDailyEmotionData(2024, 0); // 2024년 1월 데이터
+        renderCalendar(dailyData);
+    </script>
+</body>
+</html>
