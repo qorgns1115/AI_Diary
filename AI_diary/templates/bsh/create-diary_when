@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>일기 생성</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f9f9f9;
+            font-family: 'Jua', sans-serif;
+        }
+
+        form {
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            background-color: #ff6f61;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #ff8c73;
+        }
+
+        .loading-spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #ff6f61;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <form id="diaryForm" enctype="multipart/form-data">
+        <h1 style="text-align: center;">일기 생성하기</h1>
+        {% csrf_token %}
+
+        <label for="where">어디서:</label>
+        <input type="text" id="where" name="where" placeholder="예: 학교, 공원" required>
+
+        <label for="when">언제:</label>
+        <input type="text" id="when" name="when" placeholder="예: 12월 9일 월요일" required>
+
+        <label for="what">무엇을:</label>
+        <input type="text" id="what" name="what" placeholder="예: 축구를 했다, 책을 읽었다" required>
+
+        <label for="feeling">기분:</label>
+        <input type="text" id="feeling" name="feeling" placeholder="예: 행복, 슬픔" required>
+
+        <label for="gender">성별:</label>
+        <input type="text" id="gender" name="gender" placeholder="예: 남성, 여성" required>
+
+        <label for="hair">헤어스타일:</label>
+        <input type="text" id="hair" name="hair" placeholder="예: 긴 머리, 짧은 머리" required>
+
+        <button type="button" onclick="generatePrompt()">일기 생성</button>
+    </form>
+
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script>
+        function generatePrompt() {
+            const when = document.getElementById('when').value;
+            const feeling = document.getElementById('feeling').value.trim();
+
+            // 기분이 명사인지 확인
+            if (!/^[가-힣]+$/.test(feeling)) {
+                alert('기분은 명사로 입력해주세요.');
+                return;
+            }
+
+            const formData = new FormData($('#diaryForm')[0]);
+
+            // 로딩 애니메이션 표시
+            $('#loadingOverlay').css('display', 'flex');
+
+            $.ajax({
+                type: 'POST',
+                url: '/generate/', // 프롬프트 생성 뷰로 POST 요청
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()
+                },
+                success: function (response) {
+                    if (response.prompt) {
+                        window.location.href = `/result/?prompt=${encodeURIComponent(response.prompt)}&when=${encodeURIComponent(when)}&feeling=${encodeURIComponent(feeling)}`;
+                    } else if (response.error) {
+                        alert('오류: ' + response.error);
+                    }
+                },
+                error: function () {
+                    alert('서버 요청 중 오류가 발생했습니다.');
+                },
+                complete: function () {
+                    $('#loadingOverlay').fadeOut();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
