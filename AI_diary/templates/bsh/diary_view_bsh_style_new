@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diary View</title>
+    <link rel="stylesheet" href="diary_view_bsh_style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poor+Story&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="_222">
+        <div class="frame-147">
+            <img class="course-2" src="course-20.png" />
+            <div class="frame-148">
+                <div class="group-71">
+                    <div class="group-60">
+                        <div class="frame-122">
+                            <div class="div">
+                                <!-- 일기 박스 -->
+                                <div class="prompt-box">
+                                    <p>{{ prompt }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="line-14"></div>
+                        <div class="line-1"></div>
+                        <div class="line-2"></div>
+                        <div class="line-8"></div>
+                        <div class="line-9"></div>
+                        <div class="line-10"></div>
+                        <div class="line-11"></div>
+                        <div class="line-12"></div>
+                        <div class="line-13"></div>
+                        <div class="line-7"></div>
+                    </div>
+                    <div class="div2">오늘의 기분: {{ feeling }}</div>
+                </div>
+                <div class="div3">{{ when_month }}</div>
+                <div class="div4">{{ when_day }}</div>
+                <div class="div5">{{ when_weekday }}</div>
+                <!-- 이미지 박스 -->
+                <div class="rectangle-2753">
+                    <svg
+                        width="405"
+                        height="405"
+                        viewBox="0 0 405 405"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="M1.41058e-09 15.7122C6.31536e-10 7.29711 6.82179 0.475342 15.2369 0.475342L387.571 0.475342C395.987 0.475342 402.808 7.29713 402.808 15.7122L402.808 389.722C402.808 398.137 395.987 404.959 387.571 404.959L15.2369 404.959C6.82177 404.959 3.68142e-08 398.137 3.60351e-08 389.722L1.41058e-09 15.7122Z"
+                            fill="white"
+                        />
+                    </svg>
+                    <div class="image-box">
+                        <img src="{% static 'images/example1.jpg' %}" alt="일기 관련 이미지">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <img class="fuzzy-friends-artsy-cat" src="fuzzy-friends-artsy-cat0.png" />
+        <div class="frame-131">
+            <div class="frame-123">
+                <svg
+                    class="smiley"
+                    width="84"
+                    height="81"
+                    viewBox="0 0 84 81"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <!-- SVG 내용 생략 -->
+                </svg>
+                <div class="div6">오늘의 그림 일기</div>
+                <svg
+                    class="vector"
+                    width="59"
+                    height="65"
+                    viewBox="0 0 59 65"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <!-- SVG 내용 생략 -->
+                </svg>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
